@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Building Lab — Smart Architecture</title>
+<style>
+/* Smart Building Lab — Ali Hussein Abbas — Advanced Building Technology */
+:root{
+  --paper:#F7F5F0; --card:#FFFFFF; --ink:#23303B; --grey:#5B6670; --faint:#8A929A; --line:#DCD8CF; --bed:#ECE8DF;
+  --hist:#9A5800; --hist-t:#8F5200; --hist-tint:#FCEBD2; --hist-mid:#E9B771;
+  --blue:#2D57CF; --blue-t:#2650C4; --blue-tint:#E2E9FC; --blue-mid:#9EB4EE;
+  --green:#137A55; --green-t:#0F6E4C; --green-tint:#D7F1E6; --green-mid:#8FD3B6;
+  --terra:#BB3F27; --terra-t:#B03C22; --terra-tint:#FCE3DC; --terra-mid:#F2A795;
+  --sun:#FFC23A; --sun-tint:#FFF2CF;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.4 "Segoe UI",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:18px;padding:14px 22px;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font:600 22px "Bahnschrift","Segoe UI",sans-serif;margin:0}
+header .sub{color:var(--grey);font-size:13px}
+nav{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+nav button{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:8px 14px;border-radius:20px;font:600 14px "Bahnschrift","Segoe UI";cursor:pointer}
+nav button.on{color:#fff}
+nav button[data-t="1"].on{background:var(--hist);border-color:var(--hist)}
+nav button[data-t="2"].on{background:var(--blue);border-color:var(--blue)}
+nav button[data-t="3"].on{background:var(--green);border-color:var(--green)}
+nav button[data-t="4"].on{background:var(--terra);border-color:var(--terra)}
+main{padding:16px 22px}
+.tab{display:none;gap:18px;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr)}
+.tab.on{display:grid}
+@media (max-width:900px){.tab.on{grid-template-columns:1fr}}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.stage svg{width:100%;height:auto;display:block}
+.panel{display:flex;flex-direction:column;gap:12px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.box h3{margin:0 0 6px;font:600 15px "Bahnschrift","Segoe UI";letter-spacing:.02em}
+.k{font:600 11px "Bahnschrift","Segoe UI";letter-spacing:.08em;text-transform:uppercase}
+.row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.row label{min-width:120px;font-size:13px;color:var(--grey)}
+.row input[type=range]{flex:1}
+.row output{min-width:70px;text-align:right;font:600 14px "Bahnschrift","Segoe UI"}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.seg button{border:0;background:var(--paper);padding:6px 12px;font:600 13px "Bahnschrift","Segoe UI";cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--blue);color:#fff}
+.read{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.read div{background:var(--paper);border-radius:8px;padding:6px 10px}
+.read b{display:block;font:600 20px "Bahnschrift","Segoe UI"}
+.read span{font-size:12px;color:var(--grey)}
+.log{font:13px/1.45 "Cascadia Mono",Consolas,monospace;background:var(--paper);border-radius:8px;padding:8px 10px;min-height:84px}
+.src{font-size:12px;color:var(--grey)}
+.chip{display:inline-block;padding:2px 9px;border-radius:12px;font:600 12px "Bahnschrift","Segoe UI";margin:2px 4px 2px 0}
+.who{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.who div{border-radius:8px;padding:6px;text-align:center;font-size:12px}
+.who b{display:block;font:600 13px "Bahnschrift","Segoe UI"}
+.note{font-size:12.5px;color:var(--grey)}
+.play{border:0;background:var(--terra);color:#fff;font:600 13px "Bahnschrift","Segoe UI";padding:7px 14px;border-radius:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Smart Building Lab</h1>
+    <div class="sub">Smart Architecture · Ali Hussein Abbas · Advanced Building Technology — offline demo, not a simulation tool</div>
+  </div>
+  <nav>
+    <button data-t="1">1 · History</button>
+    <button data-t="2">2 · The loop</button>
+    <button data-t="3">3 · Smart skins</button>
+  </nav>
+</header>
+<main>
+
+<!-- ============================================================ TAB 1: HISTORY -->
+<section class="tab" id="t1">
+  <div class="stage"><svg id="h_svg" viewBox="0 0 900 560"></svg></div>
+  <div class="panel">
+    <div class="box">
+      <h3 style="color:var(--hist-t)">Eight steps in 140 years</h3>
+      <div class="row"><label>Year</label><input id="h_slider" type="range" min="0" max="7" step="1" value="0"><output id="h_year">1883</output></div>
+      <div class="row"><button class="play" id="h_play" style="background:var(--hist)">▶ Play the history</button></div>
+    </div>
+    <div class="box">
+      <div class="k" style="color:var(--hist-t)">Who does each step?</div>
+      <div class="who" id="h_who"></div>
+    </div>
+    <div class="box"><h3 id="h_title"></h3><div id="h_text" class="note" style="color:var(--ink);font-size:14px"></div>
+      <div class="src" id="h_src" style="margin-top:6px"></div></div>
+  </div>
+</section>
+
+<!-- ============================================================ TAB 2: THE LOOP -->
+<section class="tab" id="t2">
+  <div class="stage"><svg id="l_svg" viewBox="0 0 900 560"></svg></div>
+  <div class="panel">
+    <div class="box">
+      <h3 style="color:var(--blue-t)">The weather and the people</h3>
+      <div class="row"><label>Time of day</label><input id="l_hour" type="range" min="6" max="19" step="0.25" value="13"><output id="l_hour_o"></output></div>
+      <div class="row"><label>Outside air</label><input id="l_out" type="range" min="10" max="50" step="1" value="44"><output id="l_out_o"></output></div>
+      <div class="row"><label>People in room</label><input id="l_ppl" type="range" min="0" max="12" step="1" value="6"><output id="l_ppl_o"></output></div>
+      <div class="row"><label>Control</label>
+        <span class="seg" id="l_mode"><button data-m="auto" class="on">AUTO</button><button data-m="manual">MANUAL</button></span></div>
+      <div class="row" id="l_logic_row"><label>Cooling logic</label>
+        <span class="seg" id="l_logic"><button data-l="onoff">ON/OFF ±1 °C</button><button data-l="pi" class="on">PI</button><button data-l="mpc">PREDICTIVE</button></span></div>
+      <div id="l_manual" style="display:none">
+        <div class="row"><label>Louvres closed</label><input id="m_lou" type="range" min="0" max="100" value="20"><output id="m_lou_o"></output></div>
+        <div class="row"><label>Lights</label><input id="m_lit" type="range" min="0" max="100" value="100"><output id="m_lit_o"></output></div>
+        <div class="row"><label>Cooling</label><input id="m_ac" type="range" min="0" max="100" value="100"><output id="m_ac_o"></output></div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="k" style="color:var(--blue-t)">Room air over the last minute (live) — comfort band 23–25 °C</div>
+      <svg id="l_trace" viewBox="0 0 420 150" style="width:100%;height:auto;display:block"></svg>
+      <div class="src">Toy model of one room: on/off saws inside the deadband, PI holds the set point, predictive pre-cools for the load it expects in 30 min (cf. slide 12).</div>
+    </div>
+    <div class="box">
+      <div class="k" style="color:var(--blue-t)">1 Sense — what the sensors read</div>
+      <div class="read" id="l_read"></div>
+    </div>
+    <div class="box">
+      <div class="k" style="color:var(--blue-t)">3 Decide — the controller's rules</div>
+      <div class="log" id="l_log"></div>
+      <div class="src" style="margin-top:6px">Simple rules for teaching. A real BMS uses many more points and set points.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ TAB 3: SMART SKINS -->
+<section class="tab" id="t3">
+  <div class="stage"><svg id="k_svg" viewBox="0 0 900 560"></svg></div>
+  <div class="panel">
+    <div class="box">
+      <h3 style="color:var(--green-t)">Sun on the façade</h3>
+      <div class="row"><label>Sun strength</label><input id="k_sun" type="range" min="0" max="100" value="75"><output id="k_sun_o"></output></div>
+      <div class="row"><label>Sun direction</label><input id="k_az" type="range" min="0" max="100" value="35"><output id="k_az_o"></output></div>
+    </div>
+    <div class="box">
+      <div class="k" style="color:var(--green-t)">Three skins, three ways to respond</div>
+      <div class="read" id="k_read"></div>
+    </div>
+    <div class="box note">
+      <b>Electrochromic glass:</b> visible transmittance ≥ 0.50 clear → ≤ 0.10 tinted, 7–20 min to switch, 1–5 V DC (Sibilio et al., 2016) — the demo switches in seconds.<br>
+      <b>Kinetic lamellae:</b> blades turn on vertical axes to face the sun (Q1, Essen; JSWD Architekten).<br>
+      <b>Algae panel:</b> denser culture in strong light shades more and grows biomass (BIQ, Hamburg; Arup, 2013).
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const C = getComputedStyle(document.documentElement);
+const col = n => C.getPropertyValue('--' + n).trim();
+const NS = 'http://www.w3.org/2000/svg';
+function el(svg, tag, a, txt) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (txt !== undefined) e.textContent = txt;
+  svg.appendChild(e); return e;
+}
+function clear(svg) { while (svg.firstChild) svg.removeChild(svg.firstChild); }
+const T = (svg, x, y, t, o = {}) => el(svg, 'text', Object.assign({x, y, fill: col('ink'), 'font-size': 15,
+  'font-family': 'Segoe UI'}, o), t);
+const B = (svg, x, y, t, o = {}) => T(svg, x, y, t, Object.assign({'font-family': 'Bahnschrift, Segoe UI',
+  'font-weight': 600}, o));
+
+/* ---------------------------------------------------------------- tabs */
+function show(n) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.t == n));
+  document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id == 't' + n));
+  history.replaceState(null, '', '#tab' + n);
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => show(b.dataset.t));
+
+/* ================================================================ TAB 1 */
+const ERAS = [
+  {y: 1883, t: 'Electric thermostat', who: ['coil', 'wire', 'person', 'person'],
+   x: 'Warren Johnson’s coil of two metals bends with heat and closes a circuit; a bell or lamp tells a janitor “warm” or “cold”. A person still decides and moves the damper.',
+   s: 'Johnson (1883), US Patent 281,884'},
+  {y: 1895, t: 'Air-powered control', who: ['coil', 'air pipe', 'set point', 'air valve'],
+   x: 'Compressed air carries the signal and moves the valve: the person leaves the loop. Each room can have its own control.',
+   s: 'Johnson (1895), US Patent 542,733'},
+  {y: 1953, t: 'The Round thermostat', who: ['dial', 'wire', 'set point', 'boiler'],
+   x: 'Honeywell’s T-86 “Round”, designed by Henry Dreyfuss with Carl Kronmiller: one dial, one set point, one room — the thermostat becomes a mass product.',
+   s: 'Cooper Hewitt (n.d.) · MNopedia (n.d.)'},
+  {y: 1975, t: 'A computer in the basement', who: ['sensors', 'cables', 'minicomputer', 'pneumatics'],
+   x: 'After the 1973 oil embargo, energy costs justify computerised control. Cornell University computerises its 1964 manual system with an IBM System/7.',
+   s: 'Weltin (2024) · Cornell FCS (n.d.)'},
+  {y: 1984, t: '“The first intelligent building”', who: ['sensors', 'building network', 'computers', 'HVAC, lights, lifts'],
+   x: 'CityPlace, Hartford (38 storeys): computers run air-conditioning, lights that switch off when people leave, talking lifts. The label is claimed — and disputed the same year.',
+   s: 'Belsie (1984), The Christian Science Monitor'},
+  {y: 1995, t: 'One common language', who: ['any maker', 'BACnet / KNX', 'DDC controllers', 'any maker'],
+   x: 'BACnet is approved by ASHRAE (June 1995) and ANSI (December 1995); in Europe KNX follows (EN 50090 in 2003, ISO/IEC 14543-3 in 2006). Parts from different makers can now talk.',
+   s: 'Bushby (1997) · KNX Association (2025)'},
+  {y: 2016, t: 'AI runs the cooling', who: ['thousands of sensors', 'data network', 'AI model', 'cooling plant'],
+   x: 'Machine-learning models predict the next hour in Google’s data centres and cut the energy used for cooling by up to 40 % (company figures).',
+   s: 'Evans & Gao (2016)'},
+  {y: 2020, t: 'A learning office', who: ['≈3,800 sensors & beacons', 'IP + app', '“brain” + user', 'shading, light, air'],
+   x: 'cube berlin: the shading moves by itself when a room is empty and waits for the user’s OK when it is occupied; a central “brain” suggests improvements.',
+   s: 'WAREMA (2020)'}
+];
+const H = {i: 0, t: 0};
+function drawHistory() {
+  const svg = $('#h_svg'); clear(svg);
+  const e = ERAS[H.i], f = H.i / 7;
+  $('#h_year').textContent = e.y; $('#h_title').textContent = e.y + ' — ' + e.t;
+  $('#h_text').textContent = e.x; $('#h_src').textContent = 'Source: ' + e.s;
+  const who = $('#h_who'); who.innerHTML = '';
+  ['SENSE', 'SIGNAL', 'DECIDE', 'ACT'].forEach((k, j) => {
+    const human = e.who[j] === 'person';
+    const d = document.createElement('div');
+    d.style.background = human ? col('terra-tint') : col('hist-tint');
+    d.innerHTML = '<b style="color:' + (human ? col('terra-t') : col('hist-t')) + '">' + k + '</b>' + e.who[j];
+    who.appendChild(d);
+  });
+  // timeline
+  el(svg, 'line', {x1: 60, y1: 500, x2: 840, y2: 500, stroke: col('line'), 'stroke-width': 4});
+  ERAS.forEach((r, j) => {
+    const x = 60 + j * 780 / 7, on = j === H.i;
+    el(svg, 'circle', {cx: x, cy: 500, r: on ? 15 : 9, fill: j <= H.i ? col('hist') : col('bed')});
+    B(svg, x, 535, r.y, {'text-anchor': 'middle', 'font-size': on ? 17 : 13, fill: on ? col('hist-t') : col('grey')});
+  });
+  // the room section
+  el(svg, 'rect', {x: 60, y: 40, width: 470, height: 400, rx: 14, fill: col('paper'), stroke: col('line'), 'stroke-width': 2});
+  B(svg, 80, 70, 'THE ROOM', {fill: col('hist-t')});
+  el(svg, 'rect', {x: 560, y: 40, width: 280, height: 400, rx: 14, fill: col('paper'), stroke: col('line'), 'stroke-width': 2});
+  B(svg, 580, 70, 'THE PLANT ROOM', {fill: col('hist-t')});
+  // room temperature swing narrows with every era (illustrative)
+  const swing = 4.2 - 3.4 * f, ph = H.t;
+  const temp = 22 + swing * Math.sin(ph);
+  const cx = 300, cy = 250;
+  el(svg, 'circle', {cx, cy, r: 92, fill: temp > 23 ? col('terra-tint') : (temp < 21 ? col('blue-tint') : col('green-tint'))});
+  B(svg, cx, cy + 8, temp.toFixed(1) + ' °C', {'text-anchor': 'middle', 'font-size': 34});
+  T(svg, cx, cy + 36, 'room air', {'text-anchor': 'middle', fill: col('grey'), 'font-size': 13});
+  // sensor device by era
+  const dev = ['bimetal coil', 'bimetal coil + air', 'dial thermostat', 'sensor', 'sensors', 'DDC sensor', 'sensor array', 'sensors + beacons'][H.i];
+  el(svg, 'rect', {x: 90, y: 110, width: 120, height: 46, rx: 8, fill: col('card'), stroke: col('hist'), 'stroke-width': 2});
+  T(svg, 150, 139, dev, {'text-anchor': 'middle', 'font-size': 12});
+  // person icon when a person is in the loop
+  if (e.who.includes('person')) {
+    el(svg, 'circle', {cx: 650, cy: 150, r: 18, fill: col('terra')});
+    el(svg, 'rect', {x: 632, y: 172, width: 36, height: 60, rx: 10, fill: col('terra')});
+    T(svg, 700, 175, 'a person turns', {'font-size': 13}); T(svg, 700, 193, 'the damper', {'font-size': 13});
+  } else {
+    el(svg, 'rect', {x: 600, y: 120, width: 200, height: 80, rx: 10, fill: col('card'), stroke: col('hist'), 'stroke-width': 2});
+    T(svg, 700, 150, e.who[2], {'text-anchor': 'middle', 'font-size': 14, 'font-weight': 600});
+    T(svg, 700, 175, 'decides', {'text-anchor': 'middle', 'font-size': 12, fill: col('grey')});
+  }
+  // signal line with moving pulse
+  el(svg, 'line', {x1: 210, y1: 133, x2: 600, y2: 160, stroke: col('hist-mid'), 'stroke-width': 4, 'stroke-dasharray': H.i === 0 ? '0' : '8 6'});
+  const p = (H.t * 0.6) % 1;
+  el(svg, 'circle', {cx: 210 + 390 * p, cy: 133 + 27 * p, r: 7, fill: col('sun')});
+  // actuator
+  el(svg, 'rect', {x: 600, y: 300, width: 200, height: 90, rx: 10, fill: col('card'), stroke: col('line'), 'stroke-width': 2});
+  T(svg, 700, 330, 'act: ' + e.who[3], {'text-anchor': 'middle', 'font-size': 13});
+  const open = 0.5 - 0.45 * Math.sin(ph);
+  const ang = (1 - open) * 80;
+  el(svg, 'line', {x1: 700 - 40 * Math.cos(ang * Math.PI / 180), y1: 365 - 40 * Math.sin(ang * Math.PI / 180) * .4,
+    x2: 700 + 40 * Math.cos(ang * Math.PI / 180), y2: 365 + 40 * Math.sin(ang * Math.PI / 180) * .4, stroke: col('hist'), 'stroke-width': 8, 'stroke-linecap': 'round'});
+  // comfort band
+  B(svg, 80, 410, 'Temperature swing in this demo: ±' + swing.toFixed(1) + ' °C', {'font-size': 14, fill: col('grey')});
+  T(svg, 80, 430, 'illustrative only — tighter control in each era, not measured data', {'font-size': 12, fill: col('faint')});
+}
+$('#h_slider').oninput = e => { H.i = +e.target.value; drawHistory(); };
+let hPlay = null;
+$('#h_play').onclick = () => {
+  if (hPlay) { clearInterval(hPlay); hPlay = null; $('#h_play').textContent = '▶ Play the history'; return; }
+  $('#h_play').textContent = '❚❚ Pause';
+  hPlay = setInterval(() => { H.i = (H.i + 1) % 8; $('#h_slider').value = H.i; drawHistory(); }, 3200);
+};
+
+/* ================================================================ TAB 2 */
+const L = {mode: 'auto', energy: 0, flow: 0, logic: 'pi', T: 26.5, I: 0, on: false, u: 0.5, trace: []};
+function loopState() {
+  const hr = +$('#l_hour').value, out = +$('#l_out').value, ppl = +$('#l_ppl').value;
+  const sunAlt = Math.max(0, Math.sin(Math.PI * (hr - 6) / 13));       // 0 at 6:00 and 19:00
+  const lux = Math.round(80000 * sunAlt);
+  const co2 = Math.round(420 + ppl * 95);
+  let lou, lit, ac, vent, rules = [];
+  if (L.mode === 'auto') {
+    lou = sunAlt > 0.25 ? Math.min(75, Math.round(30 + 45 * sunAlt)) : 10;
+    rules.push(sunAlt > 0.25 ? 'IF sun on glass  → close louvres ' + lou + ' % (keep some daylight)' : 'IF little sun    → open louvres');
+    const daylight = (1 - lou / 100) * sunAlt * 1.6;
+    lit = ppl === 0 ? 0 : Math.max(0, Math.round(100 - 160 * daylight));
+    rules.push(ppl === 0 ? 'IF room empty    → lights off' : 'IF daylight low  → lights ' + lit + ' %');
+    ac = Math.round(L.u * 100);
+    if (L.logic === 'onoff') rules.push('IF T > 25 °C → ON · IF T < 23 °C → OFF  (cooling ' + ac + ' %)');
+    else if (L.logic === 'pi') rules.push('u = 0.5·e + 0.08·∫e,  e = T − 24 °C  → cooling ' + ac + ' %');
+    else rules.push('u = forecast load (next 30 min) + PI correction → cooling ' + ac + ' %');
+    vent = co2 > 1000 ? 100 : (ppl > 0 ? 40 : 0);
+    rules.push(co2 > 1000 ? 'IF CO₂ > 1000 ppm → more fresh air' : 'IF CO₂ ok        → normal ventilation');
+  } else {
+    lou = +$('#m_lou').value; lit = +$('#m_lit').value; ac = +$('#m_ac').value; vent = 60;
+    rules.push('MANUAL: the person sets everything', 'louvres ' + lou + ' % · lights ' + lit + ' % · cooling ' + ac + ' %');
+  }
+  const room = L.T;
+  const kw = (lit * 0.04 + ac * 0.22 + vent * 0.03);
+  return {hr, out, ppl, sunAlt, lux, co2, lou, lit, ac, vent, room, kw, rules};
+}
+const CAP = 0.15;
+function loadAt(hr, out, ppl, lou, lit) {
+  const sunAlt = Math.max(0, Math.sin(Math.PI * (hr - 6) / 13));
+  return Math.max(0, (out - 24) * 0.004) + ppl * 0.002 + sunAlt * (1 - lou / 100) * 0.02 + lit * 0.0001;
+}
+function stepThermal(s) {
+  const g = loadAt(s.hr, s.out, s.ppl, s.lou, s.lit);
+  if (L.mode === 'auto') {
+    const e = L.T - 24;
+    if (L.logic === 'onoff') {
+      if (L.T > 25) L.on = true; else if (L.T < 23) L.on = false;
+      L.u = L.on ? 1 : 0;
+    } else {
+      L.I = Math.max(-12, Math.min(12, L.I + e * 0.1));
+      let u = 0.5 * e + 0.08 * L.I;
+      if (L.logic === 'mpc') {
+        const gf = loadAt(Math.min(19, s.hr + 0.5), s.out, s.ppl, s.lou, s.lit);
+        u = gf / CAP + 0.35 * e + 0.03 * L.I;
+      }
+      L.u = Math.max(0, Math.min(1, u));
+    }
+  } else {
+    L.u = (+$('#m_ac').value) / 100;
+  }
+  L.T += g - CAP * L.u + (24.5 - L.T) * 0.004;
+  L.trace.push(L.T);
+  if (L.trace.length > 600) L.trace.shift();
+}
+function drawTrace() {
+  const svg = $('#l_trace'); clear(svg);
+  const Y = v => 140 - (Math.max(20, Math.min(30, v)) - 20) * 13, X = i => 30 + i * (380 / 600);
+  el(svg, 'rect', {x: 30, y: Y(25), width: 380, height: Y(23) - Y(25), fill: col('blue-tint')});
+  el(svg, 'line', {x1: 30, y1: Y(24), x2: 410, y2: Y(24), stroke: col('blue-mid'), 'stroke-width': 1.5});
+  [20, 22, 24, 26, 28, 30].forEach(v => T(svg, 24, Y(v) + 4, v, {'text-anchor': 'end', 'font-size': 10, fill: col('grey')}));
+  const off = 600 - L.trace.length;
+  const pts = L.trace.map((v, i) => X(i + off).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
+  const c = L.mode === 'manual' ? col('grey') : (L.logic === 'onoff' ? col('terra') : (L.logic === 'pi' ? col('blue') : col('green')));
+  if (L.trace.length > 1) el(svg, 'polyline', {points: pts, fill: 'none', stroke: c, 'stroke-width': 2.5});
+  B(svg, 410, 14, L.T.toFixed(1) + ' °C', {'text-anchor': 'end', 'font-size': 14, fill: c});
+}
+function drawLoop() {
+  const s = loopState(), svg = $('#l_svg'); clear(svg);
+  $('#l_hour_o').textContent = String(Math.floor(s.hr)).padStart(2, '0') + ':' + String(Math.round((s.hr % 1) * 60)).padStart(2, '0');
+  $('#l_out_o').textContent = s.out + ' °C'; $('#l_ppl_o').textContent = s.ppl;
+  ['lou', 'lit', 'ac'].forEach(k => $('#m_' + k + '_o').textContent = $('#m_' + k).value + ' %');
+  $('#l_read').innerHTML = [
+    [s.room.toFixed(1) + ' °C', 'room air'], [s.co2 + ' ppm', 'CO₂'], [s.lux.toLocaleString() + ' lx', 'daylight on façade'],
+    [s.ppl ? 'yes (' + s.ppl + ')' : 'no', 'presence'], [s.kw.toFixed(1) + ' kW', 'power now'], [L.energy.toFixed(1) + ' kWh', 'energy (time-lapse)']
+  ].map(r => '<div><b>' + r[0] + '</b><span>' + r[1] + '</span></div>').join('');
+  $('#l_log').innerHTML = s.rules.join('<br>');
+  // sky + sun
+  el(svg, 'rect', {x: 0, y: 0, width: 900, height: 560, fill: col('card')});
+  const sx = 80 + 500 * (s.hr - 6) / 13, sy = 230 - 180 * s.sunAlt;
+  el(svg, 'circle', {cx: sx, cy: sy, r: 26, fill: col('sun')});
+  // building section: façade at x=380, room 380–860
+  el(svg, 'rect', {x: 380, y: 140, width: 470, height: 300, fill: col('paper'), stroke: col('line'), 'stroke-width': 3});
+  el(svg, 'rect', {x: 360, y: 120, width: 510, height: 22, fill: col('bed')});
+  el(svg, 'rect', {x: 360, y: 438, width: 510, height: 22, fill: col('bed')});
+  // glass
+  el(svg, 'line', {x1: 384, y1: 145, x2: 384, y2: 435, stroke: col('blue-mid'), 'stroke-width': 6});
+  // louvres outside the glass
+  for (let k = 0; k < 9; k++) {
+    const y = 160 + k * 32, a = s.lou / 100 * 75 * Math.PI / 180;
+    el(svg, 'line', {x1: 352 - 20 * Math.cos(a), y1: y - 20 * Math.sin(a), x2: 352 + 20 * Math.cos(a), y2: y + 20 * Math.sin(a),
+      stroke: col('blue'), 'stroke-width': 7, 'stroke-linecap': 'round'});
+  }
+  // sun rays into the room (fewer when louvres close)
+  const rays = Math.round(6 * s.sunAlt * (1 - s.lou / 100));
+  for (let k = 0; k < rays; k++) el(svg, 'line', {x1: sx, y1: sy, x2: 420 + k * 40, y2: 420, stroke: col('sun'), 'stroke-width': 2, opacity: .7});
+  // lights
+  for (let k = 0; k < 4; k++) {
+    el(svg, 'rect', {x: 460 + k * 95, y: 146, width: 60, height: 10, rx: 3, fill: s.lit > 0 ? col('sun') : col('bed'), opacity: .3 + .7 * s.lit / 100});
+  }
+  // people
+  for (let k = 0; k < s.ppl; k++) {
+    const x = 450 + (k % 6) * 62, y = k < 6 ? 360 : 300;
+    el(svg, 'circle', {cx: x, cy: y, r: 11, fill: col('terra')});
+    el(svg, 'rect', {x: x - 11, y: y + 13, width: 22, height: 36, rx: 7, fill: col('terra')});
+  }
+  // AC unit
+  el(svg, 'rect', {x: 760, y: 170, width: 80, height: 34, rx: 6, fill: col('card'), stroke: col('blue'), 'stroke-width': 2});
+  T(svg, 800, 192, 'AC ' + s.ac + '%', {'text-anchor': 'middle', 'font-size': 12});
+  // the four layers (message flow)
+  const lay = [['SENSE', 'readings'], ['CONNECT', 'BACnet / KNX'], ['DECIDE', L.mode === 'auto' ? 'rules' : 'person'], ['ACT', 'motors · dimmers · AC']];
+  lay.forEach((l, k) => {
+    const x = 30 + k * 215, act = Math.floor(L.flow) % 4 === k;
+    el(svg, 'rect', {x, y: 480, width: 190, height: 56, rx: 12, fill: act ? col('blue') : col('blue-tint'), stroke: col('blue'), 'stroke-width': 1.5});
+    B(svg, x + 14, 504, (k + 1) + '  ' + l[0], {fill: act ? '#fff' : col('blue-t'), 'font-size': 16});
+    T(svg, x + 14, 526, l[1], {fill: act ? '#fff' : col('grey'), 'font-size': 12});
+    if (k < 3) T(svg, x + 197, 515, '→', {'font-size': 20, fill: col('grey')});
+  });
+  B(svg, 880, 40, 'Office section — the loop runs every few seconds', {'font-size': 16, fill: col('grey'), 'text-anchor': 'end'});
+}
+['l_hour', 'l_out', 'l_ppl', 'm_lou', 'm_lit', 'm_ac'].forEach(id => $('#' + id).oninput = () => { L.flow = 0; drawLoop(); });
+document.querySelectorAll('#l_logic button').forEach(b => b.onclick = () => {
+  L.logic = b.dataset.l; L.I = 0;
+  document.querySelectorAll('#l_logic button').forEach(x => x.classList.toggle('on', x === b));
+});
+document.querySelectorAll('#l_mode button').forEach(b => b.onclick = () => {
+  L.mode = b.dataset.m;
+  document.querySelectorAll('#l_mode button').forEach(x => x.classList.toggle('on', x === b));
+  $('#l_manual').style.display = L.mode === 'manual' ? 'block' : 'none'; L.flow = 0; drawLoop();
+});
+
+/* ================================================================ TAB 3 */
+const K = {tint: 0.5};
+function drawSkins() {
+  const sun = +$('#k_sun').value / 100, az = +$('#k_az').value / 100;
+  $('#k_sun_o').textContent = Math.round(sun * 100) + ' %';
+  $('#k_az_o').textContent = az < .33 ? 'morning' : (az < .66 ? 'noon' : 'afternoon');
+  const target = 0.50 - 0.40 * Math.min(1, Math.max(0, (sun - 0.2) / 0.7));   // 0.50 clear → 0.10 tinted
+  K.tint += (target - K.tint) * 0.08;                                            // slow, like the real glass
+  const svg = $('#k_svg'); clear(svg);
+  el(svg, 'rect', {x: 0, y: 0, width: 900, height: 560, fill: col('card')});
+  const sx = 120 + 660 * az, sy = 110 - 60 * Math.sin(Math.PI * az);
+  el(svg, 'circle', {cx: sx, cy: sy, r: 20 + 14 * sun, fill: col('sun'), opacity: .4 + .6 * sun});
+  const panels = [['Electrochromic glass', 70], ['Kinetic lamellae', 345], ['Algae bioreactor', 620]];
+  panels.forEach(([t, x]) => {
+    el(svg, 'rect', {x, y: 190, width: 220, height: 300, rx: 10, fill: col('paper'), stroke: col('line'), 'stroke-width': 2});
+    B(svg, x + 110, 520, t, {'text-anchor': 'middle', fill: col('green-t'), 'font-size': 16});
+  });
+  // 1 EC glass: darker blue as transmittance falls
+  const dark = (0.5 - K.tint) / 0.4;
+  el(svg, 'rect', {x: 95, y: 215, width: 170, height: 250, fill: col('blue-tint')});
+  el(svg, 'rect', {x: 95, y: 215, width: 170, height: 250, fill: col('blue'), opacity: 0.08 + 0.75 * dark});
+  B(svg, 180, 345, 'Tvis ' + K.tint.toFixed(2), {'text-anchor': 'middle', fill: dark > .5 ? '#fff' : col('ink'), 'font-size': 22});
+  // 2 lamellae facing the sun (plan view)
+  for (let k = 0; k < 7; k++) {
+    const y = 225 + k * 36, bx = 455, dx = bx - sx, dy = y - sy, n = Math.hypot(dx, dy);
+    const ux = -dy / n, uy = dx / n;
+    el(svg, 'line', {x1: bx - 34 * ux, y1: y - 34 * uy, x2: bx + 34 * ux, y2: y + 34 * uy, stroke: col('blue'), 'stroke-width': 8, 'stroke-linecap': 'round'});
+    el(svg, 'circle', {cx: bx, cy: y, r: 4, fill: col('ink')});
+  }
+  // 3 algae: greener with light
+  const dens = 0.15 + 0.8 * sun;
+  el(svg, 'rect', {x: 645, y: 215, width: 170, height: 250, rx: 6, fill: col('green-tint')});
+  el(svg, 'rect', {x: 645, y: 215, width: 170, height: 250, rx: 6, fill: col('green'), opacity: 0.1 + 0.7 * dens});
+  for (let k = 0; k < 14; k++) {
+    const y = 455 - ((Date.now() / 20 + k * 37) % 230);
+    el(svg, 'circle', {cx: 660 + (k * 53) % 150, cy: y, r: 4, fill: '#fff', opacity: .7});
+  }
+  $('#k_read').innerHTML = [
+    ['Tvis ' + K.tint.toFixed(2), 'electrochromic glass'], [Math.round(dens * 100) + ' %', 'algae density (demo)'],
+    [(K.tint > 0.45 ? 'clear' : (K.tint > 0.2 ? 'tinting' : 'tinted')), 'glass state'], [$('#k_az_o').textContent, 'blades face the sun']
+  ].map(r => '<div><b>' + r[0] + '</b><span>' + r[1] + '</span></div>').join('');
+  B(svg, 880, 40, 'Three smart skins under the same sun — demo', {'font-size': 16, fill: col('grey'), 'text-anchor': 'end'});
+}
+
+/* ---------------------------------------------------------------- one clock for the live tabs */
+setInterval(() => {
+  H.t += 0.08; if ($('#t1').classList.contains('on')) drawHistory();
+  if ($('#t2').classList.contains('on')) { L.flow += 0.05; const s = loopState(); stepThermal(s); L.energy += s.kw * 0.1 / 3600 * 60; drawLoop(); drawTrace(); }
+  if ($('#t3').classList.contains('on')) drawSkins();
+}, 100);
+
+const start = (location.hash.match(/tab(\d)/) || [0, 1])[1];
+show(start > 3 ? 1 : start); drawHistory(); drawLoop(); drawSkins();
+window.addEventListener('hashchange', () => { const m = location.hash.match(/tab(\d)/); if (m) show(m[1]); });
+</script>
+</body>
+</html>
